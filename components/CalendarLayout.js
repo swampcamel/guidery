@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import dateFns from 'date-fns'
+import Link from 'next/link'
 
 class CalendarLayout extends Component {
   constructor(props) {
@@ -64,6 +65,7 @@ class CalendarLayout extends Component {
         formattedDate = dateFns.format(day, dateFormat)
         const cloneDay = day
         days.push(
+          <Link href='/dayView'>
           <div
             className={`${classes.calendarBodyCell} ${
               !dateFns.isSameMonth(day, monthStart)
@@ -76,6 +78,7 @@ class CalendarLayout extends Component {
             <span className={classes.calendarBodyCellNumber}>{formattedDate}</span>
             <span className={classes.calendarBodyCellBg}>{formattedDate}</span>
           </div>
+          </Link>
         )
         day = dateFns.addDays(day, 1)
       }
