@@ -65,7 +65,7 @@ class CalendarLayout extends Component {
         formattedDate = dateFns.format(day, dateFormat)
         const cloneDay = day
         days.push(
-          <Link href='/dayView'>
+          <Link href={`/dayView?date=${formattedDate}-${dateFns.format(currentMonth, 'MMM-YYYY')}`}>
           <div
             className={`${classes.calendarBodyCell} ${
               !dateFns.isSameMonth(day, monthStart)
