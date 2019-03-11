@@ -1,5 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import firebase from 'firebase';
+import 'firebase/auth'
+import 'firebase/firestore'
+import 'isomorphic-unfetch'
+import clientCredentials from '../credentials/client'
 import { withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -11,6 +16,8 @@ import Hidden from '@material-ui/core/Hidden';
 import Link from "next/link";
 
 import CalendarLayout from './../components/CalendarLayout'
+
+
 
 const styles = theme => ({
   icon: {
@@ -168,18 +175,153 @@ const styles = theme => ({
   }
 });
 
-function IndexPage(props) {
-  const { classes } = props;
 
-  return (
-    <React.Fragment>
-      <CalendarLayout classes={classes}/>
-    </React.Fragment>
-  );
+
+class IndexPage extends React.Component {
+  static async getInitialProps ({ req, query }) {
+    const user = req && req.session ? req.session.decodedToken : null
+    return {user}
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      user: this.props.user,
+      value: '',
+    }
+
+    this.addDbListener = this.addDbListener.bind(this)
+    this.removeDbListener = this.removeDbListener.bind(this)
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+  }
+
+  componentDidMount() {
+    !firebase.apps.length ? firebase.initializeApp(clientCredentials) : firebase.app()
+    if (this.state.user) this.addDbListener()
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.setState({ user: user })
+        return user
+        .getIdToken()
+        .then(token => {
+          // eslint-disable-next-line no-undef
+          return fetch('/api/login', {
+            method: 'POST',
+            // eslint-disable-next-line no-undef
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            credentials: 'same-origin',
+            body: JSON.stringify({ token })
+          })
+        })
+        .then(res => this.addDbListener())
+      } else {
+        this.setState({ user: null })
+        // eslint-disable-next-line no-undef
+        fetch('/api/logout', {
+          method: 'POST',
+          credentials: 'same-origin'
+        }).then(() => this.removeDbListener())
+      }
+    })
+  }
+
+  addDbListener () {
+    var db = firebase.firestore()
+    // Disable deprecated features
+    db.settings({
+      timestampsInSnapshots: true
+    })
+    let unsubscribe = db.collection('messages').onSnapshot(
+      querySnapshot => {
+        var messages = {}
+        querySnapshot.forEach(function (doc) {
+          messages[doc.id] = doc.data()
+        })
+        if (messages) this.setState({ messages })
+      },
+      error => {
+        console.error(error)
+      }
+    )
+    this.setState({ unsubscribe })
+  }
+
+  removeDbListener () {
+    // firebase.database().ref('messages').off()
+    if (this.state.unsubscribe) {
+      this.state.unsubscribe()
+    }
+  }
+
+  handleChange (event) {
+    this.setState({ value: event.target.value })
+  }
+
+  handleSubmit (event) {
+    event.preventDefault()
+    var db = firebase.firestore()
+    // Disable deprecated features
+    db.settings({
+      timestampsInSnapshots: true
+    })
+    const date = new Date().getTime()
+    db.collection('messages')
+    .doc(`${date}`)
+    .set({
+      id: date,
+      text: this.state.value
+    })
+    this.setState({ value: '' })
+  }
+
+  handleLogin () {
+    firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())
+  }
+
+  render() {
+    const { classes } = this.props
+    console.log(classes)
+    const { user, value } = this.state
+    if (!user){
+      return(
+    <div>
+      {user ? (
+        <button onClick={this.handleLogout}>Logout</button>
+      ) : (
+        <button onClick={this.handleLogin}>Login</button>
+      )}
+      {user && (
+        <div>
+          <form onSubmit={this.handleSubmit}>
+            <input
+              type={'text'}
+              onChange={this.handleChange}
+              placeholder={'add message...'}
+              value={value}
+              />
+          </form>
+          <ul>
+            {messages &&
+              Object.keys(messages).map(key => (
+                <li key={key}>{messages[key].text}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>)}
+    else {return (
+      <React.Fragment>
+        <CalendarLayout classes={classes} user={user}/>
+      </React.Fragment>
+    )}
+  }
 }
 
 IndexPage.propTypes = {
   classes: PropTypes.object.isRequired,
 };
+
 
 export default withStyles(styles)(IndexPage);

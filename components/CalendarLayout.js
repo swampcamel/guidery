@@ -1,4 +1,6 @@
 import React, {Component} from 'react'
+import firebase from 'firebase';
+import 'firebase/auth'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import dateFns from 'date-fns'
@@ -65,7 +67,7 @@ class CalendarLayout extends Component {
         formattedDate = dateFns.format(day, dateFormat)
         const cloneDay = day
         days.push(
-          <Link href={`/dayView?date=${formattedDate}-${dateFns.format(currentMonth, 'MMM-YYYY')}`}>
+          <Link key={day} href={`/dayView?date=${formattedDate}-${dateFns.format(currentMonth, 'MMM-YYYY')}`}>
           <div
             className={`${classes.calendarBodyCell} ${
               !dateFns.isSameMonth(day, monthStart)
@@ -98,6 +100,10 @@ class CalendarLayout extends Component {
     })
   }
 
+  handleLogout () {
+    firebase.auth().signOut()
+  }
+
   nextMonth = () => {
     this.setState({
       currentMonth: dateFns.addMonths(this.state.currentMonth, 1)
@@ -117,7 +123,48 @@ class CalendarLayout extends Component {
       {this.renderHeader()}
       {this.renderDays()}
       {this.renderCells()}
-    </div>)}
+            {this.props.user ? (
+              <button onClick={this.handleLogout}>Logout</button>
+            ) : (
+              <button onClick={this.handleLogin}>Login</button>
+            )}
+    </div>)
   }
+}
+
+
+//
+
+
+// class FirebaseUI extends Component {
+//   componentDidMount() {
+//     var self = this;
+//     var uiConfig = {
+//       'callbacks': {
+//         'signInSuccess': function(user) {
+//           if (self.props.onSignIn) {
+//             self.props.onSignIn(user);
+//           }
+//           return false;
+//         }
+//       },
+//       'signInOptions': [
+//         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+//         firebase.auth.EmailAuthProvider.PROVIDER_ID
+//       ]
+//     };
+//     authUi.start('#firebaseui-auth', uiConfig);
+//   }
+//
+//   componentWillUnmount() {
+//     authUi.reset();
+//   }
+//
+//   render() {
+//     return (
+//       <div id="firebaseui-auth"></div>
+//     );
+//   }
+// }
 
   export default CalendarLayout
