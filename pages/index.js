@@ -230,9 +230,6 @@ class IndexPage extends React.Component {
   addDbListener () {
     var db = firebase.firestore()
     // Disable deprecated features
-    db.settings({
-      timestampsInSnapshots: true
-    })
     let unsubscribe = db.collection('messages').onSnapshot(
       querySnapshot => {
         var messages = {}
