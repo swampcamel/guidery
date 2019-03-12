@@ -32,8 +32,6 @@ const styles = theme => ({
 
 const DayView = withRouter((props) => {
   const {classes} = props
-  const uid = props.router.query.uid
-  console.log(uid)
   const splitDate = props.router.query.date.split('-')
   const displayDate = <div className={`${classes.mainWrapper}`}>
                         <div className={`${classes.firstDateLine}`}>
