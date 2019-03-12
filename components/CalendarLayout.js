@@ -14,6 +14,7 @@ class CalendarLayout extends Component {
     selectedDate: new Date()
     }
   }
+
   renderHeader() {
     const dateFormat = "MMMM YYYY"
     const {classes} = this.props
@@ -67,7 +68,7 @@ class CalendarLayout extends Component {
         formattedDate = dateFns.format(day, dateFormat)
         const cloneDay = day
         days.push(
-          <Link key={day} href={`/dayView?date=${formattedDate}-${dateFns.format(currentMonth, 'MMM-YYYY')}`}>
+          <Link key={day} href={`/dayView?uid=${this.props.user.uid}&date=${formattedDate}-${dateFns.format(currentMonth, 'MMM-YYYY')}`}>
           <div
             className={`${classes.calendarBodyCell} ${
               !dateFns.isSameMonth(day, monthStart)
@@ -132,39 +133,4 @@ class CalendarLayout extends Component {
   }
 }
 
-
-//
-
-
-// class FirebaseUI extends Component {
-//   componentDidMount() {
-//     var self = this;
-//     var uiConfig = {
-//       'callbacks': {
-//         'signInSuccess': function(user) {
-//           if (self.props.onSignIn) {
-//             self.props.onSignIn(user);
-//           }
-//           return false;
-//         }
-//       },
-//       'signInOptions': [
-//         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-//         firebase.auth.EmailAuthProvider.PROVIDER_ID
-//       ]
-//     };
-//     authUi.start('#firebaseui-auth', uiConfig);
-//   }
-//
-//   componentWillUnmount() {
-//     authUi.reset();
-//   }
-//
-//   render() {
-//     return (
-//       <div id="firebaseui-auth"></div>
-//     );
-//   }
-// }
-
-  export default CalendarLayout
+export default CalendarLayout

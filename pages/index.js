@@ -17,8 +17,6 @@ import Link from "next/link";
 
 import CalendarLayout from './../components/CalendarLayout'
 
-
-
 const styles = theme => ({
   icon: {
     fontFamily: 'Material Icons',
@@ -187,13 +185,16 @@ class IndexPage extends React.Component {
     super(props)
     this.state = {
       user: this.props.user,
-      value: '',
+      value: ''
     }
 
     this.addDbListener = this.addDbListener.bind(this)
     this.removeDbListener = this.removeDbListener.bind(this)
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+
+  }
+
+  componentWillUnmount() {
+    this.removeDbListener()
   }
 
   componentDidMount() {
@@ -206,10 +207,8 @@ class IndexPage extends React.Component {
         return user
         .getIdToken()
         .then(token => {
-          // eslint-disable-next-line no-undef
           return fetch('/api/login', {
             method: 'POST',
-            // eslint-disable-next-line no-undef
             headers: new Headers({ 'Content-Type': 'application/json' }),
             credentials: 'same-origin',
             body: JSON.stringify({ token })
@@ -218,7 +217,6 @@ class IndexPage extends React.Component {
         .then(res => this.addDbListener())
       } else {
         this.setState({ user: null })
-        // eslint-disable-next-line no-undef
         fetch('/api/logout', {
           method: 'POST',
           credentials: 'same-origin'
@@ -229,24 +227,31 @@ class IndexPage extends React.Component {
 
   addDbListener () {
     var db = firebase.firestore()
-    // Disable deprecated features
-    let unsubscribe = db.collection('messages').onSnapshot(
+
+    let unsubscribe = db.collection('users').onSnapshot(
       querySnapshot => {
-        var messages = {}
+        var users = {}
         querySnapshot.forEach(function (doc) {
-          messages[doc.id] = doc.data()
+          users[doc.id] = doc.id
         })
-        if (messages) this.setState({ messages })
+        if (users) {
+          if (!users[this.state.user.uid]) {
+            db.collection('users').doc(this.state.user.uid).set({
+              name: this.state.user.displayName,
+              uid: this.state.user.uid,
+              calendar: {}
+            })}
+        }
       },
       error => {
         console.error(error)
       }
     )
     this.setState({ unsubscribe })
+    console.log(this.state)
   }
 
   removeDbListener () {
-    // firebase.database().ref('messages').off()
     if (this.state.unsubscribe) {
       this.state.unsubscribe()
     }
@@ -256,22 +261,7 @@ class IndexPage extends React.Component {
     this.setState({ value: event.target.value })
   }
 
-  handleSubmit (event) {
-    event.preventDefault()
-    var db = firebase.firestore()
-    // Disable deprecated features
-    db.settings({
-      timestampsInSnapshots: true
-    })
-    const date = new Date().getTime()
-    db.collection('messages')
-    .doc(`${date}`)
-    .set({
-      id: date,
-      text: this.state.value
-    })
-    this.setState({ value: '' })
-  }
+
 
   handleLogin () {
     firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())
@@ -279,7 +269,6 @@ class IndexPage extends React.Component {
 
   render() {
     const { classes } = this.props
-    console.log(classes)
     const { user, value } = this.state
     if (!user){
       return(
@@ -289,24 +278,6 @@ class IndexPage extends React.Component {
       ) : (
         <button onClick={this.handleLogin}>Login</button>
       )}
-      {user && (
-        <div>
-          <form onSubmit={this.handleSubmit}>
-            <input
-              type={'text'}
-              onChange={this.handleChange}
-              placeholder={'add message...'}
-              value={value}
-              />
-          </form>
-          <ul>
-            {messages &&
-              Object.keys(messages).map(key => (
-                <li key={key}>{messages[key].text}</li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>)}
     else {return (
       <React.Fragment>

@@ -25,6 +25,7 @@
     "next": "^8.0.3",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
+    "react-jss": "^8.6.1",
     "session-file-store": "^1.2.0"
   }
 }
