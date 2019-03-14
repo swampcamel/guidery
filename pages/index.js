@@ -18,6 +18,49 @@ import Link from "next/link"
 import CalendarLayout from './../components/CalendarLayout'
 
 const styles = theme => ({
+  login: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+  },
+  loginButton: {
+    padding: '20px',
+    borderRadius: '50px',
+    fontSize: '32px',
+    cursor: 'pointer',
+    display: 'inline-block',
+    verticalAlign: 'middle',
+    '-webkit-transform': 'perspective(1px) translateZ(0)',
+    transform: 'perspective(1px) translateZ(0)',
+    'box-shadow': '0 0 1px rgba(0, 0, 0, 0)',
+    '-webkit-transition-duration': '0.3s',
+    transitionDuration: '0.6s',
+    '-webkit-transition-property': 'transform',
+    transitionProperty: 'transform',
+    '-webkit-transition-timing-function': 'ease-out',
+    'transition-timing-function': 'ease-out',
+    '&:hover': {
+      boxShadow: '',
+      '-webkit-transform': 'translateY(-8px)',
+      transform: 'translateY(-8px)',
+      'box-shadow': '0 12px 20px -12px rgba(0, 0, 0, 0.35)'
+    }
+  },
+  logout: {
+    fontSize: '20px',
+    cursor: 'pointer',
+    padding: '24px',
+    transition: 'all ease-in .3s',
+    display: 'inline-block',
+    '&:hover': {
+      color: '#444',
+      fontSize: '22px',
+      borderBottom: '1px solid #1a8fff',
+      borderRight: '1px solid #1a8fff',
+      backgroundColor: '#fff'
+    }
+  },
   icon: {
     fontFamily: 'Material Icons',
     fontStyle: 'normal',
@@ -173,8 +216,6 @@ const styles = theme => ({
   }
 })
 
-
-
 class IndexPage extends React.Component {
   static async getInitialProps ({ req, query }) {
     const user = req && req.session ? req.session.decodedToken : null
@@ -187,10 +228,8 @@ class IndexPage extends React.Component {
       user: this.props.user,
       value: ''
     }
-
     this.addDbListener = this.addDbListener.bind(this)
     this.removeDbListener = this.removeDbListener.bind(this)
-
   }
 
   componentWillUnmount() {
@@ -249,7 +288,6 @@ class IndexPage extends React.Component {
       }
     )
     this.setState({ unsubscribe })
-    console.log(this.state)
   }
 
   removeDbListener () {
@@ -277,7 +315,9 @@ class IndexPage extends React.Component {
       {user ? (
         <button onClick={this.handleLogout}>Logout</button>
       ) : (
-        <button onClick={this.handleLogin}>Login</button>
+        <div className={classes.login}>
+          <div className={classes.loginButton} onClick={this.handleLogin}>Login</div>
+        </div>
       )}
       </div>)}
     else {return (

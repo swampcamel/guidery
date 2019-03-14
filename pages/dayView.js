@@ -13,8 +13,9 @@ const styles = theme => ({
   },
   dayViewWrapper: {
     display: 'flex',
-    width: '1200px',
-    margin: '42px auto'
+    maxWidth: '1200px',
+    margin: '42px auto',
+    padding: '0 12px'
   },
   firstDateLine: {
     display: 'flex',

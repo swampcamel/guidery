@@ -125,9 +125,10 @@ class CalendarLayout extends Component {
       {this.renderDays()}
       {this.renderCells()}
             {this.props.user ? (
-              <button onClick={this.handleLogout}>Logout</button>
-            ) : (
-              <button onClick={this.handleLogin}>Login</button>
+              <div className={classes.logout} onClick={this.handleLogout}>Logout</div>
+              ) : (
+                <button onClick={this.handleLogin}>Login</button>
+
             )}
     </div>)
   }

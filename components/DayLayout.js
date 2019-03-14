@@ -114,7 +114,7 @@ class DayLayout extends React.Component {
   // {this.state.tasks.map( (task) => {return <TaskLayout title={task.title} />} )}
   render() {
     return (
-      <div>
+      <div style={{width: '100%'}}>
         {(this.state.tasks || []).map((task, index) =>
           <TaskLayout key={index}
               title={task.title}

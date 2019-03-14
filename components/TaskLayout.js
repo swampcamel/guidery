@@ -23,11 +23,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 const styles = theme => ({
   cardWrapper: {
-    marginBottom: '20px'
+    marginBottom: '20px',
+    width: '100%'
   },
   card: {
-    width: '800px',
-
+    width: '100%',
+    maxWidth: '800px'
   },
   media: {
     height: 0,
@@ -71,11 +72,11 @@ class TaskLayout extends React.Component {
   }
 
   handleDeleteTask = () => {
-    console.log(id)
     const userId = this.props.user
     const dateQuery = this.props.date
     const id = this.props.id
-    var db = firebase.firestore()
+    let db = firebase.firestore()
+
     db.collection('users').doc(`${userId}`).collection('calendar').doc(`${dateQuery}`).collection('tasks').doc(`${id}`).delete()
     .then(function() {
       console.log("deleted " + id)
@@ -84,8 +85,6 @@ class TaskLayout extends React.Component {
     })
     this.handleClose()
   }
-
-
 
   render() {
     const { classes } = this.props;
@@ -99,7 +98,7 @@ class TaskLayout extends React.Component {
             </Avatar>
           }
           action={
-            <IconButton aria-owns={anchorEl ? 'simple-menu' : undefined}
+            <IconButton aria-owns={ anchorEl ? 'simple-menu' : undefined }
               aria-haspopup="true"
               onClick={this.handleClick}>
               <MoreVertIcon />
@@ -116,11 +115,6 @@ class TaskLayout extends React.Component {
             >
             <MenuItem onClick={this.handleDeleteTask}>Delete</MenuItem>
           </Menu>
-        <CardContent>
-          <Typography component="p">
-
-          </Typography>
-        </CardContent>
         <CardActions className={classes.actions} disableActionSpacing>
           <IconButton
             className={classnames(classes.expand, {
