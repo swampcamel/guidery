@@ -46,10 +46,8 @@ class DayLayout extends React.Component {
     let unsubscribe = db.collection('users').doc(`${userId}`).collection('calendar').doc(`${dateQuery}`).collection('tasks').onSnapshot(
       querySnapshot => {
         if (querySnapshot) {
-          console.log("here", querySnapshot)
           let tasks = []
           querySnapshot.forEach(taskDoc => {
-            console.log(taskDoc)
             tasks.push( {id: taskDoc.id, ...taskDoc.data()})
           })
           this.setState({ tasks: tasks, loading: false })
@@ -61,7 +59,6 @@ class DayLayout extends React.Component {
     )
 
     this.setState({unsubscribe})
-    console.log(this.state)
   }
 
   removeDbListener () {
@@ -87,7 +84,7 @@ class DayLayout extends React.Component {
     const userId = this.props.user
     const dateQuery = this.props.date
 
-    firebase.firestore().collection('users').doc(`${userId}`).collection('calendar').doc(`${dateQuery}`).collection('tasks').add({
+    db.collection('users').doc(`${userId}`).collection('calendar').doc(`${dateQuery}`).collection('tasks').add({
       title: this.state.newTaskTitle,
       desc: this.state.newTaskDesc,
       startTime: this.state.newTaskStartTime,
@@ -97,19 +94,18 @@ class DayLayout extends React.Component {
     this.setState({ open: false })
   }
 
+
+
   handleOnChange = event => {
     const newValue = event.target.value
     const stateSlice = event.target.id
     this.setState({[stateSlice]: newValue})
-    console.log(this.state)
   };
 
   renderTasks = () => {
-    console.log(this.state)
     if (this.state.tasks = null ) return <div>Add a new task by clicking on the button</div>
     else if (this.state.tasks) {
       const taskList = this.state.tasks.map(task => <TaskLayout title={task.Title}/>)
-      console.log(task)
       return taskList
     }
     else { return <div>No State</div> }
@@ -126,6 +122,8 @@ class DayLayout extends React.Component {
               startTime={task.startTime}
               endTime={task.endTime}
               id={task.id}
+              user={this.props.user}
+              date={this.props.date}
             />
         )}
         <Button variant="contained" onClick={this.handleClickOpen}>Add Task</Button>
