@@ -1,19 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import firebase from 'firebase';
+import React from 'react'
+import PropTypes from 'prop-types'
+import firebase from 'firebase'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'isomorphic-unfetch'
 import clientCredentials from '../credentials/client'
-import { withStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Hidden from '@material-ui/core/Hidden';
-import Link from "next/link";
+import { withStyles } from '@material-ui/core/styles'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import Grid from '@material-ui/core/Grid'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import CardMedia from '@material-ui/core/CardMedia'
+import Hidden from '@material-ui/core/Hidden'
+import Link from "next/link"
 
 import CalendarLayout from './../components/CalendarLayout'
 
@@ -171,7 +171,7 @@ const styles = theme => ({
     flexBasis: 'calc(100%/7)',
     width: 'calc(100%/7)'
   }
-});
+})
 
 
 
@@ -238,9 +238,10 @@ class IndexPage extends React.Component {
           if (!users[this.state.user.uid]) {
             db.collection('users').doc(this.state.user.uid).set({
               name: this.state.user.displayName,
-              uid: this.state.user.uid,
-              calendar: {}
-            })}
+              uid: this.state.user.uid
+            })
+            db.collection('users').doc(this.state.user.uid).collection('calendar').add({calendarId: 'test'})
+          }
         }
       },
       error => {

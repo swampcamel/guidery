@@ -2,14 +2,19 @@ import DayLayout from './../components/DayLayout'
 import {withRouter} from 'next/router'
 import { withStyles } from '@material-ui/core/styles'
 
-
 const styles = theme => ({
-  mainWrapper: {
+  dateWrapper: {
     fontFamily: 'Roboto',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
-    width: 160+'px'
+    width: 160+'px',
+    marginRight: 50+'px'
+  },
+  dayViewWrapper: {
+    display: 'flex',
+    width: '1200px',
+    margin: '42px auto'
   },
   firstDateLine: {
     display: 'flex',
@@ -33,7 +38,7 @@ const styles = theme => ({
 const DayView = withRouter((props) => {
   const {classes} = props
   const splitDate = props.router.query.date.split('-')
-  const displayDate = <div className={`${classes.mainWrapper}`}>
+  const displayDate = <div className={`${classes.dateWrapper}`}>
                         <div className={`${classes.firstDateLine}`}>
                           <span className={`${classes.selectedDay}`}>{splitDate[0]}</span>
                           <span className={`${classes.selectedMonth}`}>{splitDate[1]}</span>
@@ -43,9 +48,9 @@ const DayView = withRouter((props) => {
                         |
                         <div className={`${classes.selectedYear}`}>{splitDate[2]}</div>
                       </div>
-    return (<div>
+    return (<div className={`${classes.dayViewWrapper}`}>
       {displayDate}
-      <DayLayout/>
+      <DayLayout user={props.router.query.uid} date={props.router.query.date}/>
     </div>)
 })
 

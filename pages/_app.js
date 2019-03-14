@@ -1,24 +1,24 @@
-import React from "react";
-import App, { Container } from "next/app";
-import Head from "next/head";
-import { MuiThemeProvider } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import JssProvider from 'react-jss/lib/JssProvider';
-import getPageContext from './../getPageContext';
+import React from "react"
+import App, { Container } from "next/app"
+import Head from "next/head"
+import { MuiThemeProvider } from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import JssProvider from 'react-jss/lib/JssProvider'
+import getPageContext from './../getPageContext'
 
 export default class GuideryApp extends App {
   constructor() {
-    super();
+    super()
     this.pageContext = getPageContext();
   }
   static async getInitialProps({ Component, ctx }) {
-    let pageProps = {};
+    let pageProps = {}
 
     if (Component.getInitialProps) {
       pageProps = await Component.getInitialProps(ctx);
     }
 
-    return { pageProps };
+    return { pageProps }
   }
 
   componentDidMount() {
@@ -38,7 +38,7 @@ export default class GuideryApp extends App {
         />
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
       </Head>
-    );
+    )
   }
 
   render() {
@@ -59,6 +59,6 @@ export default class GuideryApp extends App {
           </MuiThemeProvider>
         </JssProvider>
       </Container>
-    );
+    )
   }
 }
